@@ -1,0 +1,121 @@
+{
+  "scenario_id": "lucknow_20261007_2000_ist",
+  "title": "Lucknow Corridor Air Quality Benchmark Scenario",
+  "provenance": {
+    "timestamp_ist": "2026-10-07T20:00:00+05:30",
+    "timestamp_utc": "2026-10-07T14:30:00Z",
+    "data_source": "OpenAQ v3 Verified Historical Archive",
+    "archive_s3_prefix": "s3://openaq-data-archive/records/csv.gz/locationid={7140,5659,2456}/year=2026/month=10/",
+    "mode": "HISTORICAL_SCENARIO_DEMO",
+    "live_guidance_supported": false,
+    "ingestion_lag_notice": "Live real-time routing is out of scope due to upstream ~80h regulatory publishing latency."
+  },
+  "weather_context": {
+    "source": "Open-Meteo Historical Weather API",
+    "location": "Lucknow, India (26.85° N, 80.92° E)",
+    "timestamp_ist": "2026-10-07T20:00:00+05:30",
+    "temperature_c": 24.4,
+    "relative_humidity_pct": 88,
+    "wind_speed_kmh": 7.4,
+    "wind_direction_deg": 112,
+    "wind_direction_cardinal": "ESE",
+    "role": "Macroscale ambient meteorological context only. Does not prove street-level dispersion."
+  },
+  "stations": [
+    {
+      "id": 7140,
+      "name": "Gomti Nagar, Lucknow",
+      "agency": "UPPCB",
+      "coordinates": {
+        "latitude": 26.862194,
+        "longitude": 80.998417
+      },
+      "role": "DESTINATION_MONITOR",
+      "spatial_relation": "Monitors the common route terminus at Gomti Nagar",
+      "readings": {
+        "pm25": 13.0,
+        "pm10": 27.0,
+        "unit": "µg/m³"
+      }
+    },
+    {
+      "id": 5659,
+      "name": "Lalbagh, Lucknow",
+      "agency": "CPCB",
+      "coordinates": {
+        "latitude": 26.844621,
+        "longitude": 80.938804
+      },
+      "role": "ARTERIAL_CORRIDOR_MONITOR",
+      "spatial_relation": "Located ~450m from Route A Hazratganj arterial alignment",
+      "readings": {
+        "pm25": 43.1,
+        "pm10": 94.3,
+        "unit": "µg/m³"
+      }
+    },
+    {
+      "id": 2456,
+      "name": "Talkatora District Industries Center, Lucknow",
+      "agency": "CPCB",
+      "coordinates": {
+        "latitude": 26.833997,
+        "longitude": 80.891736
+      },
+      "role": "EXTERNAL_BACKGROUND_MONITOR",
+      "distance_from_origin_km": 3.12,
+      "spatial_relation": "Located 3.12 km west of Charbagh Railway Station; does NOT monitor route origin.",
+      "readings": {
+        "pm25": 26.96,
+        "pm10": 74.0,
+        "unit": "µg/m³"
+      }
+    }
+  ],
+  "routes": {
+    "route_a": {
+      "id": "hazratganj_arterial",
+      "name": "Route A — Hazratganj Arterial Corridor",
+      "corridor_description": "Charbagh → Hussainganj → Hazratganj → 1090 Chauraha → Gomti Nagar",
+      "distance_km": 12.12,
+      "distance_status": "PROVISIONAL",
+      "estimated_duration_min": 13.0,
+      "duration_status": "PROVISIONAL_FREE_FLOW",
+      "duration_note": "Model-Estimated Free-Flow Duration (Historical Traffic Excluded)",
+      "monitored_distance_km": 3.47,
+      "coverage_pct": 28.7,
+      "coverage_status": "PROVISIONAL",
+      "unmonitored_pct": 71.3,
+      "monitored_stations": [5659, 7140],
+      "monitored_station_details": [
+        { "id": 5659, "name": "Lalbagh", "pm25": 43.1, "pm10": 94.3 },
+        { "id": 7140, "name": "Gomti Nagar", "pm25": 13.0, "pm10": 27.0 }
+      ]
+    },
+    "route_b": {
+      "id": "cantonment_bypass",
+      "name": "Route B — Cantonment Bypass Corridor",
+      "corridor_description": "Charbagh → Cantt Road → Nehru Road → VIP Road → Gomti Nagar",
+      "distance_km": 14.60,
+      "distance_status": "PROVISIONAL",
+      "estimated_duration_min": 19.5,
+      "duration_status": "PROVISIONAL_FREE_FLOW",
+      "duration_note": "Model-Estimated Free-Flow Duration (Historical Traffic Excluded)",
+      "monitored_distance_km": 1.68,
+      "coverage_pct": 11.5,
+      "coverage_status": "PROVISIONAL",
+      "unmonitored_pct": 88.5,
+      "monitored_stations": [7140],
+      "monitored_station_details": [
+        { "id": 7140, "name": "Gomti Nagar", "pm25": 13.0, "pm10": 27.0 }
+      ],
+      "unmonitored_disclosure": "88.5% of the Cantonment corridor has no nearby monitoring stations within a 1.0 km buffer. Zero synthetic extrapolation is applied."
+    }
+  },
+  "methodology_notes": {
+    "sampling": "50-meter equidistant polyline node sampling using Euclidean distance to nearest active monitor.",
+    "buffer_threshold_m": 1000,
+    "limitations": "Does not model microscale street canyons, roadside vehicle plumes, or cabin infiltration. Traffic congestion delays are unavailable and excluded."
+  },
+  "disclaimer": "This tool is an environmental scenario demonstration for hackathon evaluation. It provides relative ambient particulate observations and does not constitute medical, health, or travel safety advice."
+}

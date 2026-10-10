@@ -1,0 +1,17 @@
+{
+  "source": "Open-Meteo Historical Weather API",
+  "location": {
+    "city": "Lucknow",
+    "country": "India",
+    "latitude": 26.85,
+    "longitude": 80.92
+  },
+  "timestamp_ist": "2026-10-07T20:00:00+05:30",
+  "timestamp_utc": "2026-10-07T14:30:00Z",
+  "temperature_c": 24.4,
+  "relative_humidity_pct": 88,
+  "wind_speed_kmh": 7.4,
+  "wind_direction_deg": 112,
+  "wind_direction_cardinal": "ESE",
+  "role": "Macroscale ambient meteorological context only. Does not prove street-level dispersion."
+}

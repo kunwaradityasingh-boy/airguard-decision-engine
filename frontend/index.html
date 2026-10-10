@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirGuard Decision Engine — Lucknow Corridor Environmental Scenario</title>
+  <meta name="description" content="Transparent, scientifically bounded air-quality historical scenario comparison for urban commuters in Lucknow (Charbagh to Gomti Nagar). Built on AWS.">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+  <!-- Custom Application Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Mandatory Historical Scenario Playback Banner -->
+  <aside class="scenario-banner" role="banner" id="scenario-banner" aria-label="Historical Scenario Notice">
+    <div class="banner-content">
+      <span class="banner-badge">HISTORICAL SCENARIO PLAYBACK</span>
+      <span class="banner-text">
+        <strong>Observation Window:</strong> October 7, 2026, 20:00 IST (14:30 UTC) &bull;
+        <strong>Source:</strong> OpenAQ v3 Verified Historical Archive &bull;
+        <strong>Live Route Guidance:</strong> <span class="badge-inactive">INACTIVE / OUT OF SCOPE</span>
+      </span>
+    </div>
+  </aside>
+
+  <!-- Application Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">🛡️</div>
+        <div>
+          <h1 class="brand-title">AirGuard Decision Engine</h1>
+          <p class="brand-subtitle">Lucknow Corridor Environmental Evaluation: Charbagh Railway Station &rarr; Gomti Nagar</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="track-badge">Environmental Hacks 2026 &bull; Air Track</span>
+        <span class="aws-badge">Built on AWS</span>
+        <span class="status-indicator" id="status-indicator">
+          <span class="status-dot online"></span> <span id="status-text">Connecting to API...</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Layout -->
+  <main class="main-container">
+
+    <!-- Left Column: Map Container & Map Controls -->
+    <section class="map-section" aria-label="Interactive Corridor Map">
+      <div class="map-card">
+        <div class="map-toolbar">
+          <div class="view-controls">
+            <button class="btn btn-sm active" id="btn-focus-all">Overview</button>
+            <button class="btn btn-sm" id="btn-focus-route-a">Route A (Hazratganj)</button>
+            <button class="btn btn-sm" id="btn-focus-route-b">Route B (Cantonment)</button>
+            <button class="btn btn-sm" id="btn-focus-bg">Station 2456 (Talkatora)</button>
+          </div>
+          <div class="layer-toggles">
+            <label class="toggle-label">
+              <input type="checkbox" id="toggle-buffers" checked> 1 km Proximity Buffers
+            </label>
+          </div>
+        </div>
+
+        <div id="map" class="map-view" tabindex="0" aria-label="Lucknow transit corridor map"></div>
+
+        <!-- Map Legend -->
+        <div class="map-legend" id="map-legend">
+          <h4 class="legend-title">Map Legend</h4>
+          <div class="legend-items">
+            <div class="legend-item">
+              <span class="legend-line route-a-line"></span>
+              <span><strong>Route A:</strong> Hazratganj Arterial ($12.12\text{ km}$, $28.7\%$ monitored)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-line route-b-line"></span>
+              <span><strong>Route B:</strong> Cantonment Bypass ($14.60\text{ km}$, <span class="text-unmonitored">88.5% unmonitored</span>)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-pin pin-active"></span>
+              <span>Active Regulatory Station (CPCB / UPPCB)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-circle"></span>
+              <span>1.0 km Observational Proximity Buffer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Decision Support Dashboard -->
+    <section class="dashboard-section" aria-label="Decision Support Comparison">
+
+      <!-- Corridor Comparison Card -->
+      <article class="card comparison-card" id="comparison-card">
+        <div class="card-header">
+          <h2 class="card-title">Corridor Scenario Comparison</h2>
+          <span class="badge badge-provisional">PROVISIONAL METRICS</span>
+        </div>
+
+        <p class="section-desc">
+          Comparing historical ambient particulate observations recorded on <strong>October 7, 2026 at 20:00 IST</strong>.
+        </p>
+
+        <!-- Route A Summary -->
+        <div class="route-panel route-a-panel">
+          <div class="route-header">
+            <div>
+              <span class="route-tag tag-a">Route A</span>
+              <h3 class="route-name">Hazratganj Arterial Corridor</h3>
+            </div>
+            <span class="badge badge-monitored">28.7% Monitored</span>
+          </div>
+          <p class="route-path">Charbagh &rarr; Hussainganj &rarr; Hazratganj &rarr; 1090 Chauraha &rarr; Gomti Nagar</p>
+
+          <div class="metric-grid">
+            <div class="metric-item">
+              <span class="metric-label">Route Length <small>(Provisional)</small></span>
+              <span class="metric-value">12.12 km</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Estimated Free-Flow <small>(Traffic Excluded)</small></span>
+              <span class="metric-value">~13.0 min</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Monitored Distance <small>(1.0 km Buffer)</small></span>
+              <span class="metric-value">3.47 km</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Unmonitored Gap</span>
+              <span class="metric-value">71.3%</span>
+            </div>
+          </div>
+
+          <div class="monitored-readings">
+            <h4 class="readings-title">Nearby Regulatory Observations:</h4>
+            <div class="reading-chips">
+              <div class="chip">
+                <span class="chip-station">Station 5659 (Lalbagh, ~450m):</span>
+                <span class="chip-value">PM<sub>2.5</sub>: <strong>43.1</strong> &bull; PM<sub>10</sub>: <strong>94.3</strong> µg/m³</span>
+              </div>
+              <div class="chip">
+                <span class="chip-station">Station 7140 (Gomti Nagar, ~200m):</span>
+                <span class="chip-value">PM<sub>2.5</sub>: <strong>13.0</strong> &bull; PM<sub>10</sub>: <strong>27.0</strong> µg/m³</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Route B Summary -->
+        <div class="route-panel route-b-panel">
+          <div class="route-header">
+            <div>
+              <span class="route-tag tag-b">Route B</span>
+              <h3 class="route-name">Cantonment Bypass Corridor</h3>
+            </div>
+            <span class="badge badge-unmonitored-tag">88.5% Unmonitored</span>
+          </div>
+          <p class="route-path">Charbagh &rarr; Cantt Road &rarr; Nehru Road &rarr; VIP Road &rarr; Gomti Nagar</p>
+
+          <div class="metric-grid">
+            <div class="metric-item">
+              <span class="metric-label">Route Length <small>(Provisional)</small></span>
+              <span class="metric-value">14.60 km <span class="delta text-warning">(+2.48 km)</span></span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Estimated Free-Flow <small>(Traffic Excluded)</small></span>
+              <span class="metric-value">~19.5 min <span class="delta text-warning">(+6.5 min)</span></span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Monitored Distance <small>(1.0 km Buffer)</small></span>
+              <span class="metric-value">1.68 km</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Unmonitored Gap</span>
+              <span class="metric-value text-alert">88.5%</span>
+            </div>
+          </div>
+
+          <!-- Unmonitored Segment Disclosure Alert Box -->
+          <div class="alert-box alert-unmonitored">
+            <div class="alert-icon" aria-hidden="true">⚠️</div>
+            <div>
+              <h4 class="alert-heading">Unmonitored Transit Corridor Disclosure</h4>
+              <p class="alert-text">
+                <strong>88.5% of the Cantonment corridor has zero air-quality monitoring stations</strong> within a 1.0 km buffer. Zero synthetic data or unvalidated interpolation has been applied. In the absence of observational data, this corridor <strong>cannot be assumed or claimed to be cleaner or healthier</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- Active Monitoring Stations & Weather Context -->
+      <div class="dashboard-subgrid">
+
+        <!-- Stations Summary Card -->
+        <article class="card stations-card" id="stations-card">
+          <h3 class="card-title-sm">Active Benchmark Stations</h3>
+          <ul class="stations-list" id="stations-list">
+            <li class="station-entry">
+              <div class="station-meta">
+                <span class="station-id">ID 7140</span>
+                <span class="station-name">Gomti Nagar (UPPCB)</span>
+                <span class="station-role role-dest">Terminus Monitor</span>
+              </div>
+              <div class="station-pollutants">
+                <span>PM<sub>2.5</sub>: <strong>13.0 µg/m³</strong></span>
+                <span>PM<sub>10</sub>: <strong>27.0 µg/m³</strong></span>
+              </div>
+            </li>
+            <li class="station-entry">
+              <div class="station-meta">
+                <span class="station-id">ID 5659</span>
+                <span class="station-name">Lalbagh (CPCB)</span>
+                <span class="station-role role-art">Hazratganj Monitor</span>
+              </div>
+              <div class="station-pollutants">
+                <span>PM<sub>2.5</sub>: <strong>43.1 µg/m³</strong></span>
+                <span>PM<sub>10</sub>: <strong>94.3 µg/m³</strong></span>
+              </div>
+            </li>
+            <li class="station-entry station-background">
+              <div class="station-meta">
+                <span class="station-id">ID 2456</span>
+                <span class="station-name">Talkatora DIC (CPCB)</span>
+                <span class="station-role role-bg">External Background</span>
+              </div>
+              <div class="station-pollutants">
+                <span>PM<sub>2.5</sub>: <strong>26.96 µg/m³</strong></span>
+                <span>PM<sub>10</sub>: <strong>74.0 µg/m³</strong></span>
+              </div>
+              <p class="station-spatial-note">
+                Located <strong>3.12 km West</strong> of Charbagh origin. Urban/industrial background reference only; <strong>does NOT monitor route origin</strong>.
+              </p>
+            </li>
+          </ul>
+        </article>
+
+        <!-- Weather Context Card -->
+        <article class="card weather-card" id="weather-card">
+          <h3 class="card-title-sm">Ambient Meteorological Context</h3>
+          <p class="weather-source">Open-Meteo Historical Weather &bull; Lucknow (26.85° N, 80.92° E)</p>
+          <div class="weather-metrics">
+            <div class="weather-item">
+              <span class="w-label">Temperature</span>
+              <span class="w-val">24.4°C</span>
+            </div>
+            <div class="weather-item">
+              <span class="w-label">Relative Humidity</span>
+              <span class="w-val">88%</span>
+            </div>
+            <div class="weather-item">
+              <span class="w-label">Wind Velocity</span>
+              <span class="w-val">7.4 km/h</span>
+            </div>
+            <div class="weather-item">
+              <span class="w-label">Wind Direction</span>
+              <span class="w-val">112° (ESE)</span>
+            </div>
+          </div>
+          <p class="weather-note">
+            Macroscale ambient context only. Does not prove microscale street-level pollutant dispersion.
+          </p>
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Mandatory Non-Medical Health Disclaimer Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="disclaimer-banner" role="contentinfo" aria-label="Non-Medical Disclaimer">
+        <div class="disclaimer-badge">⚖️ MANDATORY HEALTH &amp; DEMONSTRATION DISCLAIMER</div>
+        <p class="disclaimer-text">
+          AirGuard Decision Engine is an environmental scenario demonstration developed for hackathon technical evaluation. Ambient regulatory fixed-station monitor measurements do not represent microscale in-vehicle commuter cabin exposure. This application provides relative particulate observations and does not constitute medical, health, or travel safety advice. No transit corridor is certified as "safe" or "clean".
+        </p>
+      </div>
+      <div class="footer-metadata">
+        <span>Data Sources: <a href="https://openaq.org" target="_blank" rel="noopener">OpenAQ v3</a> (ODbL) &bull; <a href="https://www.openstreetmap.org" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL) &bull; <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0)</span>
+        <span>Minimal Serverless Architecture Built on AWS (Amazon S3, Amazon CloudFront, AWS Lambda)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Leaflet JavaScript Library -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- AirGuard Application Logic -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "route_a_hazratganj",
+      "properties": {
+        "id": "hazratganj_arterial",
+        "name": "Route A — Hazratganj Arterial Corridor",
+        "corridor_type": "Urban Core Arterial",
+        "distance_km": 12.12,
+        "distance_status": "PROVISIONAL",
+        "duration_minutes": 13.0,
+        "duration_status": "PROVISIONAL_FREE_FLOW",
+        "duration_note": "Model-Estimated Free-Flow Duration (Historical Traffic Excluded)",
+        "monitored_distance_km": 3.47,
+        "coverage_pct": 28.7,
+        "coverage_status": "PROVISIONAL",
+        "unmonitored_pct": 71.3,
+        "monitored_stations": [5659, 7140],
+        "stroke_color": "#e65100",
+        "stroke_style": "solid"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.922100, 26.832400],
+          [80.925500, 26.834800],
+          [80.931500, 26.838500],
+          [80.936200, 26.843000],
+          [80.941200, 26.848100],
+          [80.947000, 26.850500],
+          [80.952500, 26.852000],
+          [80.960000, 26.852800],
+          [80.968000, 26.853500],
+          [80.976500, 26.855200],
+          [80.985000, 26.858000],
+          [80.992000, 26.860200],
+          [80.998417, 26.862194]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "route_b_cantonment",
+      "properties": {
+        "id": "cantonment_bypass",
+        "name": "Route B — Cantonment Bypass Corridor",
+        "corridor_type": "Southern Military Green Belt Bypass",
+        "distance_km": 14.60,
+        "distance_status": "PROVISIONAL",
+        "duration_minutes": 19.5,
+        "duration_status": "PROVISIONAL_FREE_FLOW",
+        "duration_note": "Model-Estimated Free-Flow Duration (Historical Traffic Excluded)",
+        "monitored_distance_km": 1.68,
+        "coverage_pct": 11.5,
+        "coverage_status": "PROVISIONAL",
+        "unmonitored_pct": 88.5,
+        "monitored_stations": [7140],
+        "unmonitored_notice": "88.5% of this corridor has no nearby monitoring stations. Exposure cannot be inferred or claimed to be cleaner.",
+        "stroke_color": "#2e7d32",
+        "stroke_style": "dashed"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.922100, 26.832400],
+          [80.924800, 26.828200],
+          [80.928500, 26.823500],
+          [80.935000, 26.819000],
+          [80.944000, 26.816000],
+          [80.953000, 26.815000],
+          [80.962000, 26.818500],
+          [80.968000, 26.824000],
+          [80.974000, 26.829000],
+          [80.982000, 26.835000],
+          [80.989000, 26.843000],
+          [80.995000, 26.851000],
+          [80.998417, 26.862194]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "station_7140",
+      "properties": {
+        "id": 7140,
+        "name": "Gomti Nagar, Lucknow",
+        "agency": "UPPCB",
+        "role": "DESTINATION_MONITOR",
+        "role_description": "Monitors Gomti Nagar corridor destination",
+        "readings": {
+          "pm25": 13.0,
+          "pm10": 27.0,
+          "unit": "µg/m³"
+        },
+        "buffer_radius_m": 1000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [80.998417, 26.862194]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "station_5659",
+      "properties": {
+        "id": 5659,
+        "name": "Lalbagh, Lucknow",
+        "agency": "CPCB",
+        "role": "ARTERIAL_CORRIDOR_MONITOR",
+        "role_description": "Monitors Route A Hazratganj arterial segment",
+        "readings": {
+          "pm25": 43.1,
+          "pm10": 94.3,
+          "unit": "µg/m³"
+        },
+        "buffer_radius_m": 1000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [80.938804, 26.844621]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "station_2456",
+      "properties": {
+        "id": 2456,
+        "name": "Talkatora District Industries Center, Lucknow",
+        "agency": "CPCB",
+        "role": "EXTERNAL_BACKGROUND_MONITOR",
+        "role_description": "External urban/industrial background reference monitor (3.12 km west of Charbagh origin; does NOT monitor origin)",
+        "distance_from_origin_km": 3.12,
+        "readings": {
+          "pm25": 26.96,
+          "pm10": 74.0,
+          "unit": "µg/m³"
+        },
+        "buffer_radius_m": 1000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [80.891736, 26.833997]
+      }
+    }
+  ]
+}
