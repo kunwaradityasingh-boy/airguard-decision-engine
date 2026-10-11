@@ -1,6 +1,6 @@
 # AirGuard Decision Engine 🛡️
 
-> **Retrospective Environmental Decision-Support Prototype for Urban Commuters in Lucknow, India**  
+> **Retrospective Environmental Decision-Support Prototype for Urban Commuters in Lucknow, India**
 > *Built for Environmental Hacks 2026 — Air Track &bull; Designed for AWS Serverless Architecture*
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kunwaradityasingh-boy/airguard-decision-engine)
@@ -16,7 +16,7 @@
 ---
 
 > [!CAUTION]
-> **Mandatory Scientific & Non-Medical Disclaimer:**  
+> **Mandatory Scientific & Non-Medical Disclaimer:**
 > "AirGuard Decision Engine provides retrospective environmental scenario comparisons for algorithmic demonstration only. It does not provide medical advice or health guarantees."
 
 ---
