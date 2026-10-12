@@ -9,7 +9,7 @@
 [![Cloud Deployment](https://img.shields.io/badge/Cloud%20Deployment-Not%20Deployed%20%2F%20Architecture%20Ready-yellow)](#deployment-status--cloud-readiness)
 [![Python 3.11](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://python.org)
 [![Zero Build Overhead](https://img.shields.io/badge/Frontend-Vanilla%20JS%20%2F%20Leaflet-green)](#technology-stack)
-[![Tests](https://img.shields.io/badge/Unit%20Tests-16%2F16%20Passed-brightgreen)](#automated-testing--verification)
+[![Tests](https://img.shields.io/badge/Unit%20Tests-21%2F21%20Passed-brightgreen)](#automated-testing--verification)
 [![Secret Scanning](https://img.shields.io/badge/Secret%20Scan-Passed%20(0%20leaks)-brightgreen)](#security-practices--credential-hygiene)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -149,7 +149,7 @@ airguard-decision-engine/
 │   │   ├── scenario_20261007.json # Canonical benchmark scenario response
 │   │   └── weather_context.json # Open-Meteo ambient meteorological observations
 │   └── tests/                   # Automated test suite
-│       └── test_scenario.py     # 15 unit tests (schema, whitelist, CORS, fallback)
+│       └── test_scenario.py     # 21 unit tests (validation, 405 methods, schema, whitelist, CORS, fallback)
 │
 ├── frontend/                    # Web client (Zero-build SPA)
 │   ├── index.html               # Semantic HTML single-page layout
@@ -208,29 +208,36 @@ The backend exposes three RESTful endpoints with CORS enabled (`Access-Control-A
 | `/api/routes` | `GET` | GeoJSON FeatureCollection containing Route A, Route B, and station points | RFC 7946 GeoJSON FeatureCollection |
 
 ### Error Handling & Malformed Input
+* **Scenario ID Validation:** Requesting `/api/scenario?scenario_id=invalid` or empty returns `HTTP 400 Bad Request` with permitted scenario IDs.
 * **Unrecognized Parameters:** Requesting `/api/scenario?unknown_param=xyz` returns `HTTP 400 Bad Request` with a structured list of permitted parameters.
 * **Attempting Live Mode:** Requesting `/api/scenario?mode=live` returns `HTTP 400 Feature Disabled` with an explanation of upstream OpenAQ batch latency.
+* **Unsupported HTTP Methods:** `POST`, `PUT`, `DELETE`, `PATCH`, and `HEAD` return `HTTP 405 Method Not Allowed` with JSON error payload and CORS headers. `HEAD` requests return 0 response body bytes (RFC 9110 §9.3.2).
 * **CORS Preflight:** `OPTIONS` requests return `HTTP 204 No Content` with appropriate CORS headers.
 
 ---
 
 ## 9. Automated Testing & Verification
 
-The test suite validates data schemas, station whitelisting, unmonitored segment flags, CORS headers, malformed input handling, and fallback resilience using Python's built-in `unittest` framework:
+The test suite validates scenario ID validation, malformed query parameter handling, HTTP method restrictions (405 normalization), CORS preflight headers, fallback resilience, route GeoJSON structure, coordinate validity, station whitelisting, unmonitored segment flags, historical scope, provenance, provisional route metrics, and the mandatory health disclaimer using Python's built-in `unittest` framework:
 
 ```powershell
 python -m unittest discover -s backend/tests -p "test_*.py" -v
 ```
 
-### Verified Empirical Results (16/16 Passed):
+### Verified Empirical Results (21/21 Passed):
 ```
+test_empty_scenario_id_param_returns_400 (TestAirGuardBackendHandler) .. ok
 test_fallback_resilience (TestAirGuardBackendHandler) ................. ok
 test_get_routes_endpoint (TestAirGuardBackendHandler) ................. ok
 test_get_scenario_endpoint (TestAirGuardBackendHandler) ............... ok
 test_health_check_endpoint (TestAirGuardBackendHandler) ............... ok
+test_invalid_scenario_id_param_returns_400 (TestAirGuardBackendHandler)  ok
+test_local_request_handler_has_405_method_handlers (TestAirGuardBackendHandler) ok
 test_malformed_query_parameter_returns_400 (TestAirGuardBackendHandler)  ok
 test_options_cors_preflight (TestAirGuardBackendHandler) .............. ok
 test_requesting_live_mode_returns_400 (TestAirGuardBackendHandler) ..... ok
+test_unsupported_http_methods_return_405 (TestAirGuardBackendHandler) .. ok
+test_valid_scenario_id_param_returns_200 (TestAirGuardBackendHandler) .. ok
 test_geojson_feature_structure (TestAirGuardRoutesGeoJson) ............ ok
 test_route_coordinates_validity (TestAirGuardRoutesGeoJson) ........... ok
 test_cantonment_unmonitored_disclosure (TestAirGuardScenarioFixture) .. ok
@@ -242,7 +249,7 @@ test_station_readings_and_roles (TestAirGuardScenarioFixture) ......... ok
 test_station_whitelist_and_exclusion_of_defunct_stations .............. ok
 
 ----------------------------------------------------------------------
-Ran 16 tests in 0.003s — OK
+Ran 21 tests in 0.006s — OK
 ```
 
 ### JavaScript Syntax Verification
@@ -259,8 +266,8 @@ node --check frontend/js/app.js
   ```powershell
   python scripts/scan_secrets.py
   ```
-  *Result: Scanned 111 repository files &bull; **PASS: Zero hardcoded secrets detected**.*
-* **Strix Penetration Assessment:** Marked **`NOT VERIFIED`** *(Strix CLI 1.6.2 is installed locally, but full multi-agent automated penetration scanning was deferred to prevent external credit usage prior to deployment)*.
+  *Result: Scanned 120 repository files &bull; **PASS: Zero hardcoded secrets detected**.*
+* **Strix Penetration Assessment:** Marked **`NOT VERIFIED`** *(Strix CLI 1.6.2 is installed locally and sandbox image is cached, but automated penetration scanning failed during LLM authentication before executing security probes against http://127.0.0.1:8000)*.
 * **Environment Protection:** `.gitignore` enforces strict exclusion of local environment configurations, secrets directories, and PEM keys.
 
 ---
@@ -273,7 +280,7 @@ node --check frontend/js/app.js
 | **Local Web Frontend** | Static HTTP server on `127.0.0.1:3000` | **VERIFIED & RUNNING** | Tested in browser; renders OpenStreetMap tiles, polylines, and popups |
 | **AWS Lambda API** | Serverless function via Lambda Function URL | **NOT DEPLOYED / GATED** | Deployment code ready; provisioning paused pending auth clock skew fix |
 | **Amazon S3 & CloudFront** | Static web hosting with Origin Access Control | **NOT DEPLOYED / GATED** | Deployment code ready; provisioning paused pending auth clock skew fix |
-| **Strix Security Pen-Test** | Multi-agent dynamic security assessment | **NOT VERIFIED** | Deferred to avoid consuming external API quota |
+| **Strix Security Pen-Test** | Multi-agent dynamic security assessment | **NOT VERIFIED** | Tool installed & sandbox image cached; scan failed during model handshake prior to executing probes |
 
 ---
 
@@ -281,13 +288,13 @@ node --check frontend/js/app.js
 
 > *Screenshots can be captured directly from the running local demo at `http://127.0.0.1:3000`:*
 
-| View | Target Screenshot | Visual Verification Highlights |
-|---|---|---|
-| **Full Dashboard Overview** | `docs/screenshots/01_full_dashboard_overview.png` *(Placeholder)* | Top Historical Scenario Banner (`October 7, 2026, 20:00 IST`), green `Online` status pill, interactive corridor map, side-by-side comparison cards, persistent health disclaimer footer. |
-| **Route A (Hazratganj)** | `docs/screenshots/02_route_a_hazratganj_focus.png` *(Placeholder)* | Amber solid polyline, Lalbagh station buffer circle, interactive popup displaying $12.12\text{ km}$ (Provisional), $\approx 13.0\text{ min}$ (Free-flow), and $28.7\%$ coverage. |
-| **Route B (Cantonment)** | `docs/screenshots/03_route_b_cantonment_alert.png` *(Placeholder)* | Green dashed polyline traversing southern green belt, golden alert box highlighting the **`88.5% Unmonitored Corridor Disclosure`**. |
-| **Station 2456 Separation** | `docs/screenshots/04_station_2456_background.png` *(Placeholder)* | Map zoomed to Talkatora DIC ($3.12\text{ km}$ west of Charbagh); popup identifying it as an external background monitor that does NOT monitor origin. |
-| **CLI Verification Proof** | `docs/screenshots/05_cli_test_and_scan_proof.png` *(Placeholder)* | Terminal output displaying 16 passing tests (`Ran 16 tests in 0.003s — OK`) and secret scan (`119 files scanned — PASS`). |
+| View | Target Screenshot | Status | Visual Verification Highlights |
+|---|---|---|---|
+| **Full Dashboard Overview** | `docs/screenshots/01_full_dashboard_overview.png` | **Captured** | Top Historical Scenario Banner (`October 7, 2026, 20:00 IST`), green `Online` status pill, interactive corridor map, side-by-side comparison cards, persistent health disclaimer footer. |
+| **Route A (Hazratganj)** | `docs/screenshots/02_route_a_hazratganj_focus.png` | **Captured** | Amber solid polyline, Lalbagh station buffer circle, interactive popup displaying $12.12\text{ km}$ (Provisional), $\approx 13.0\text{ min}$ (Free-flow), and $28.7\%$ coverage. |
+| **Route B (Cantonment)** | `docs/screenshots/03_route_b_cantonment_alert.png` | **Captured** | Green dashed polyline traversing southern green belt, golden alert box highlighting the **`88.5% Unmonitored Corridor Disclosure`**. |
+| **Station 2456 Separation** | `docs/screenshots/04_station_2456_background.png` | **Captured** | Map zoomed to Talkatora DIC ($3.12\text{ km}$ west of Charbagh); popup identifying it as an external background monitor that does NOT monitor origin. |
+| **CLI Verification Proof** | `docs/screenshots/05_cli_test_and_scan_proof.png` | **Captured** | Terminal output displaying 21 passing tests (`Ran 21 tests in 0.006s — OK`) and secret scan (`120 files scanned — PASS`). |
 
 ---
 
