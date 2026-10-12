@@ -79,6 +79,15 @@ class TestAirGuardScenarioFixture(unittest.TestCase):
         self.assertEqual(st_2456["readings"]["pm10"], 74.0)
         self.assertIn("not monitor", st_2456["spatial_relation"].lower())
 
+    def test_route_a_coverage_metrics(self):
+        """Verifies Route A monitored coverage is 28.7% and unmonitored is 71.3%."""
+        routes = self.scenario.get("routes", {})
+        route_a = routes.get("route_a", {})
+        self.assertEqual(route_a.get("coverage_pct"), 28.7)
+        self.assertEqual(route_a.get("unmonitored_pct"), 71.3)
+        self.assertEqual(route_a.get("monitored_distance_km"), 3.47)
+        self.assertEqual(route_a.get("distance_km"), 12.12)
+
     def test_cantonment_unmonitored_disclosure(self):
         """Verifies Cantonment corridor is flagged as 88.5% unmonitored with zero synthetic data."""
         routes = self.scenario.get("routes", {})

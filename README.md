@@ -9,7 +9,7 @@
 [![Cloud Deployment](https://img.shields.io/badge/Cloud%20Deployment-Not%20Deployed%20%2F%20Architecture%20Ready-yellow)](#deployment-status--cloud-readiness)
 [![Python 3.11](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://python.org)
 [![Zero Build Overhead](https://img.shields.io/badge/Frontend-Vanilla%20JS%20%2F%20Leaflet-green)](#technology-stack)
-[![Tests](https://img.shields.io/badge/Unit%20Tests-15%2F15%20Passed-brightgreen)](#automated-testing--verification)
+[![Tests](https://img.shields.io/badge/Unit%20Tests-16%2F16%20Passed-brightgreen)](#automated-testing--verification)
 [![Secret Scanning](https://img.shields.io/badge/Secret%20Scan-Passed%20(0%20leaks)-brightgreen)](#security-practices--credential-hygiene)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -222,7 +222,7 @@ The test suite validates data schemas, station whitelisting, unmonitored segment
 python -m unittest discover -s backend/tests -p "test_*.py" -v
 ```
 
-### Verified Empirical Results (15/15 Passed):
+### Verified Empirical Results (16/16 Passed):
 ```
 test_fallback_resilience (TestAirGuardBackendHandler) ................. ok
 test_get_routes_endpoint (TestAirGuardBackendHandler) ................. ok
@@ -237,11 +237,12 @@ test_cantonment_unmonitored_disclosure (TestAirGuardScenarioFixture) .. ok
 test_fixture_provenance_and_scope (TestAirGuardScenarioFixture) ....... ok
 test_mandatory_health_disclaimer_present (TestAirGuardScenarioFixture)  ok
 test_provisional_metric_status_preserved (TestAirGuardScenarioFixture)  ok
+test_route_a_coverage_metrics (TestAirGuardScenarioFixture) ........... ok
 test_station_readings_and_roles (TestAirGuardScenarioFixture) ......... ok
 test_station_whitelist_and_exclusion_of_defunct_stations .............. ok
 
 ----------------------------------------------------------------------
-Ran 15 tests in 0.003s — OK
+Ran 16 tests in 0.003s — OK
 ```
 
 ### JavaScript Syntax Verification
@@ -286,7 +287,7 @@ node --check frontend/js/app.js
 | **Route A (Hazratganj)** | `docs/screenshots/02_route_a_hazratganj_focus.png` *(Placeholder)* | Amber solid polyline, Lalbagh station buffer circle, interactive popup displaying $12.12\text{ km}$ (Provisional), $\approx 13.0\text{ min}$ (Free-flow), and $28.7\%$ coverage. |
 | **Route B (Cantonment)** | `docs/screenshots/03_route_b_cantonment_alert.png` *(Placeholder)* | Green dashed polyline traversing southern green belt, golden alert box highlighting the **`88.5% Unmonitored Corridor Disclosure`**. |
 | **Station 2456 Separation** | `docs/screenshots/04_station_2456_background.png` *(Placeholder)* | Map zoomed to Talkatora DIC ($3.12\text{ km}$ west of Charbagh); popup identifying it as an external background monitor that does NOT monitor origin. |
-| **CLI Verification Proof** | `docs/screenshots/05_cli_test_and_scan_proof.png` *(Placeholder)* | Terminal output displaying 15 passing tests (`Ran 15 tests in 0.003s — OK`) and secret scan (`111 files scanned — PASS`). |
+| **CLI Verification Proof** | `docs/screenshots/05_cli_test_and_scan_proof.png` *(Placeholder)* | Terminal output displaying 16 passing tests (`Ran 16 tests in 0.003s — OK`) and secret scan (`119 files scanned — PASS`). |
 
 ---
 
