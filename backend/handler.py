@@ -103,6 +103,15 @@ def process_request(path: str, query_params: dict, http_method: str = "GET") -> 
     # Route: GET /api/scenario
     if parsed_path in ("/scenario", "/api/scenario"):
         scenario_data = load_fixture(SCENARIO_FIXTURE_PATH, FALLBACK_SCENARIO)
+        scenario_id_param = query_params.get("scenario_id", [None])[0]
+        if scenario_id_param is not None:
+            expected_id = scenario_data.get("scenario_id", "lucknow_20261007_2000_ist")
+            if not scenario_id_param or scenario_id_param != expected_id:
+                return 400, {
+                    "error": "Bad Request",
+                    "message": f"Invalid scenario_id '{scenario_id_param}'. Valid scenario ID: '{expected_id}'.",
+                    "valid_scenario_ids": [expected_id]
+                }, headers
         return 200, scenario_data, headers
 
     # Route: GET /api/routes
@@ -174,7 +183,7 @@ class LocalRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
-        query_params = parse_qs(parsed.query)
+        query_params = parse_qs(parsed.query, keep_blank_values=True)
         status, body, headers = process_request(parsed.path, query_params, "GET")
 
         self.send_response(status)
@@ -184,6 +193,32 @@ class LocalRequestHandler(BaseHTTPRequestHandler):
 
         response_bytes = json.dumps(body, indent=2).encode("utf-8")
         self.wfile.write(response_bytes)
+
+    def _handle_method_not_allowed(self):
+        parsed = urlparse(self.path)
+        status, body, headers = process_request(parsed.path, {}, self.command)
+        self.send_response(status)
+        for k, v in headers.items():
+            self.send_header(k, v)
+        self.end_headers()
+        if self.command != "HEAD":
+            response_bytes = json.dumps(body, indent=2).encode("utf-8")
+            self.wfile.write(response_bytes)
+
+    def do_POST(self):
+        self._handle_method_not_allowed()
+
+    def do_PUT(self):
+        self._handle_method_not_allowed()
+
+    def do_DELETE(self):
+        self._handle_method_not_allowed()
+
+    def do_PATCH(self):
+        self._handle_method_not_allowed()
+
+    def do_HEAD(self):
+        self._handle_method_not_allowed()
 
     def log_message(self, format, *args):
         # Clean logging

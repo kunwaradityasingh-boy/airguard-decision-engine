@@ -23,7 +23,8 @@ from handler import (
     ENABLE_LIVE_INGESTION,
     FALLBACK_SCENARIO,
     SCENARIO_FIXTURE_PATH,
-    ROUTES_FIXTURE_PATH
+    ROUTES_FIXTURE_PATH,
+    LocalRequestHandler
 )
 
 
@@ -218,6 +219,63 @@ class TestAirGuardBackendHandler(unittest.TestCase):
         fallback = load_fixture("nonexistent_path_xyz.json", FALLBACK_SCENARIO)
         self.assertTrue(fallback.get("fallback"))
         self.assertEqual(len(fallback.get("stations", [])), 3)
+
+    def test_valid_scenario_id_param_returns_200(self):
+        """Verifies valid scenario_id returns HTTP 200 and benchmark payload."""
+        event = {
+            "rawPath": "/api/scenario",
+            "queryStringParameters": {"scenario_id": "lucknow_20261007_2000_ist"},
+            "requestContext": {"http": {"method": "GET"}}
+        }
+        response = lambda_handler(event, None)
+        self.assertEqual(response["statusCode"], 200)
+        body = json.loads(response["body"])
+        self.assertEqual(body.get("scenario_id"), "lucknow_20261007_2000_ist")
+
+    def test_invalid_scenario_id_param_returns_400(self):
+        """Verifies invalid scenario_id returns HTTP 400 Bad Request."""
+        event = {
+            "rawPath": "/api/scenario",
+            "queryStringParameters": {"scenario_id": "invalid_scenario_xyz"},
+            "requestContext": {"http": {"method": "GET"}}
+        }
+        response = lambda_handler(event, None)
+        self.assertEqual(response["statusCode"], 400)
+        body = json.loads(response["body"])
+        self.assertEqual(body.get("error"), "Bad Request")
+        self.assertIn("Invalid scenario_id", body.get("message"))
+
+    def test_empty_scenario_id_param_returns_400(self):
+        """Verifies empty scenario_id returns HTTP 400 Bad Request."""
+        event = {
+            "rawPath": "/api/scenario",
+            "queryStringParameters": {"scenario_id": ""},
+            "requestContext": {"http": {"method": "GET"}}
+        }
+        response = lambda_handler(event, None)
+        self.assertEqual(response["statusCode"], 400)
+        body = json.loads(response["body"])
+        self.assertEqual(body.get("error"), "Bad Request")
+
+    def test_unsupported_http_methods_return_405(self):
+        """Verifies POST, PUT, DELETE, PATCH, HEAD return HTTP 405 Method Not Allowed."""
+        for method in ["POST", "PUT", "DELETE", "PATCH", "HEAD"]:
+            event = {
+                "rawPath": "/api/scenario",
+                "requestContext": {"http": {"method": method}}
+            }
+            response = lambda_handler(event, None)
+            self.assertEqual(response["statusCode"], 405, f"Expected 405 for {method}")
+            self.assertEqual(response["headers"]["Access-Control-Allow-Origin"], "*")
+            self.assertEqual(response["headers"]["Access-Control-Allow-Methods"], "GET, OPTIONS")
+            body = json.loads(response["body"])
+            self.assertEqual(body.get("error"), "Method Not Allowed")
+
+    def test_local_request_handler_has_405_method_handlers(self):
+        """Verifies LocalRequestHandler implements handlers for unsupported HTTP verbs."""
+        for verb in ["do_POST", "do_PUT", "do_DELETE", "do_PATCH", "do_HEAD"]:
+            self.assertTrue(hasattr(LocalRequestHandler, verb), f"Missing {verb} handler")
+            self.assertTrue(callable(getattr(LocalRequestHandler, verb)))
 
 
 if __name__ == "__main__":
